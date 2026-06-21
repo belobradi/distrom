@@ -1,0 +1,27 @@
+services:
+  postgres-db:
+    image: postgres:17.9-alpine3.22
+    container_name: postgres-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  flyway-migrator:
+      image: flyway/flyway
+      volumes:
+        - ./migrations:/flyway/sql
+      depends_on:
+        postgres-db:
+          condition: service_healthy
+      command: -url=jdbc:postgresql://postgres-db:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -connectRetries=10 migrate
