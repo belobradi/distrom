@@ -4,8 +4,15 @@ import os
 from sqlalchemy import text
 from functools import partial
 
+ALL_LEVELS = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
+ENV_LEVEL = ALL_LEVELS.get(os.getenv("LOG_LEVEL", "INFO"), 20)
+
 def _log(engine, message, level="INFO"):
     """Centralized logging function that logs messages to both console and database."""
+
+    if ALL_LEVELS.get(level, 20) < ENV_LEVEL:
+        return
+
     frame = inspect.currentframe()
     frame = frame.f_back if frame is not None else None
         
