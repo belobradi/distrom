@@ -2,9 +2,11 @@ import streamlit as st
 import pandas as pd
 import sqlalchemy as sqal
 
-engine = sqal.create_engine('postgresql://postgres:123456@localhost:5432/distrom')
+from db_utils import get_db_connection
 
-st.title("Distrom - Network Data Viewer")
+engine = get_db_connection()
+
+st.title("Network Data Overview")
 
 query_tables = sqal.text("SELECT tablename FROM pg_catalog.pg_tables WHERE tablename LIKE 'source_%';")
 tables = pd.read_sql(query_tables, engine.connect())['tablename'].tolist()

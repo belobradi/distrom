@@ -3,8 +3,8 @@ from datetime import datetime
 import os
 from sqlalchemy import text
 from functools import partial
+from .Constants import ALL_LEVELS
 
-ALL_LEVELS = {"DEBUG": 10, "INFO": 20, "WARNING": 30, "ERROR": 40}
 ENV_LEVEL = ALL_LEVELS.get(os.getenv("LOG_LEVEL", "INFO"), 20)
 
 def _log(engine, message, level="INFO"):
@@ -26,7 +26,7 @@ def _log(engine, message, level="INFO"):
 
     with engine.connect() as conn:
         conn.execute(
-            text("INSERT INTO system_logs (timestamp, level, function, message) "
+            text("INSERT INTO execution_logs (timestamp, level, function, message) "
                  "VALUES (:ts, :lvl, :fnc, :msg)"),
             {"ts": datetime.now(), "lvl": level, "fnc": filename, "msg": message}
         )

@@ -1,6 +1,7 @@
 import pandapower.networks as nw
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import inspect, text
 import src.common.Logging as Logging
+from db_utils import get_db_connection
 
 def export_network_to_tables(net, engine):
     inspector = inspect(engine)
@@ -22,8 +23,7 @@ def export_network_to_tables(net, engine):
             Logging.log_info(engine, f"Export: {table_name} ({len(df)} rows)")
 
 def main():
-    # Format: postgresql://username:password@host:port/database_name
-    engine = create_engine('postgresql://postgres:123456@localhost:5432/distrom')
+    engine = get_db_connection()
 
     Logging.log_info(engine, "Loading Network...")
     net = nw.create_cigre_network_mv()
