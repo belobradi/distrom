@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import sqlalchemy as sqal
 
-from db_utils import get_db_connection
+from common.db_utils import get_db_connection
 
 engine = get_db_connection()
 

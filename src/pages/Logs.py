@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from db_utils import get_db_connection
+from src.common.db_utils import get_db_connection
 
 engine = get_db_connection()
 

@@ -17,20 +17,21 @@ def _log(engine, message, level="INFO"):
     frame = frame.f_back if frame is not None else None
         
     if frame:
-        filename = os.path.basename(frame.f_code.co_filename)
+        source = f"{os.path.basename(frame.f_code.co_filename)}::{frame.f_code.co_name}"
     else:
-        filename = "unknown"
+        source = "unknown"
     
 
-    print(f"[{datetime.now().strftime('%H:%M:%S')}] [{level}] [{filename}] {message}")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] [{level}] [{source}] {message}")
 
-    with engine.connect() as conn:
-        conn.execute(
-            text("INSERT INTO execution_logs (timestamp, level, function, message) "
-                 "VALUES (:ts, :lvl, :fnc, :msg)"),
-            {"ts": datetime.now(), "lvl": level, "fnc": filename, "msg": message}
-        )
-        conn.commit()
+    try:
+        with engine.begin() as conn:
+            conn.execute(
+                text("SELECT fnc.write_log(:level, :source, :message)"),
+                {"level": level, "source": source, "message": message}
+            )
+    except Exception as e:
+        print(f"Logging failed: {e}")
 
 log_info = partial(_log, level="INFO")
 log_warning = partial(_log, level="WARNING")
