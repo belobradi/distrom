@@ -1,0 +1,10 @@
+[project]
+name = "distrom"
+version = "0.1.0"
+requires-python = ">=3.13.0, <3.14"
+
+dependencies = [
+    "dotenv==0.9.9",
+    "pandapower==3.4.0",
+    "streamlit==1.58.0"
+]
