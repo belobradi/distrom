@@ -12,11 +12,11 @@ if "status" not in st.session_state:
 
 col, spacer = st.columns([1, 3])
 with col:
-    if st.button("Update Source", use_container_width=True):
+    if st.button("Update Source", width='stretch'):
         run_import()
 
 col, spacer = st.columns([1, 3])
 with col:
-    if st.button("Initialize", use_container_width=True):
+    if st.button("Initialize", width='stretch'):
         with engine.begin() as conn:
             conn.execute(text("SELECT fnc.import_network()"))
